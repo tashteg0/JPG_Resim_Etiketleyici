@@ -48,7 +48,7 @@ Seç : txt dosyasının seçildiği kısım.
 
 # Etiketleri Arama
 
-# Etiketler Kolonundan Seçerek Arama
+## Etiketler Kolonundan Seçerek Arama
 
 ![arama_1](https://github.com/tashteg0/JPG_Resim_Etiketleyici/assets/100838566/ba5924c6-a60e-40aa-b0b6-2ef48e179d60)
 
@@ -62,7 +62,7 @@ Kolona sağ tıklayarak Etiketler seçilir.
 
 Etiketler kolonunun sağ aşağı okuna tıklayarak bir veya birden fazla etiket seçilir.
 
-# Arama Kısmına Yazarak Arama
+## Arama Kısmına Yazarak Arama
 
 ![arama_4](https://github.com/tashteg0/JPG_Resim_Etiketleyici/assets/100838566/8553d2d1-bd5e-4ba3-8080-e2ef749dffdd)
 
