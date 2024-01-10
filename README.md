@@ -1,3 +1,5 @@
+[![](https://img.shields.io/badge/Language-English-blue.svg)](https://github.com/tashteg0/JPG_Resim_Etiketleyici/blob/main/README.english.md)
+
 # JPG_Resim_Etiketleyici
 JPG'lerin Ayrıntılar ↦ Açıklama ↦ Etiketler kısmına ( Exif Tags - XPKeywords - 40094 ) etiket eklemek için bir uygulama.
 
