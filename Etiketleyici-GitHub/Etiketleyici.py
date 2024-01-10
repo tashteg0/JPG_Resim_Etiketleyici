@@ -1,4 +1,4 @@
-# 03/01/2024
+# 11/01/2024
 
 import piexif
 import os
@@ -24,36 +24,55 @@ def all_children(wid, finList=None, indent=0):
         all_children(item, finList, indent + 1)
     return finList
 
-def width_convert(widget:Widget , cur_widget:str) :
-    if cur_widget == "Button":
-        type_w = 17
-        type_q = 7
-    elif cur_widget == "Label":
-        type_w = 13
-        type_q = 7
-    elif cur_widget == "Frame":
-        type_w = 0
-        type_q = 1
-
-    x = widget.winfo_width()
-    p = (x-type_w)/type_q
-    return math.floor(p)
-
 def resim_geç(taraf:str):
     if taraf == "sağ":
-        if int(resim_index_sol.cget("text")) < int(resim_index_sağ.cget("text")) :
-            resim_index_sol.configure(text=str(int(resim_index_sol.cget("text"))+1))
+        girilen = int(resim_index_sol.get("0.0","end").strip())
+        max_resim_sayı = int(resim_index_sağ.cget("text"))
 
-    elif taraf == "sol":
-        if int(resim_index_sol.cget("text")) > 1 :
-            resim_index_sol.configure(text=str(int(resim_index_sol.cget("text"))-1))
+        if girilen < 1:
+            resim_index_sol.delete("0.0","end")
+            resim_index_sol.insert("0.0",chars="    2")
+        elif girilen < max_resim_sayı :
+            resim_index_sol.delete("0.0","end")
+            resim_index_sol.insert("0.0",chars="    "+str(girilen+1))
+        elif girilen > max_resim_sayı :
+            resim_index_sol.delete("0.0","end")
+            resim_index_sol.insert("0.0",chars="    "+str(max_resim_sayı))
+        
+    elif taraf == "sol":            
+        girilen = int(resim_index_sol.get("0.0","end").strip())
+        max_resim_sayı = int(resim_index_sağ.cget("text"))
 
+        if girilen > max_resim_sayı:
+            resim_index_sol.delete("0.0","end")
+            resim_index_sol.insert("0.0",chars="    "+str(max_resim_sayı-1))
+        elif girilen > 1 :
+            resim_index_sol.delete("0.0","end")
+            resim_index_sol.insert("0.0",chars="    "+str(girilen-1))
+        elif girilen < 1 :
+            resim_index_sol.delete("0.0","end")
+            resim_index_sol.insert("0.0",chars="    1")
+
+    elif taraf == "git":
+        girilen = int(resim_index_sol.get("0.0","end").strip())
+        max_resim_sayı = int(resim_index_sağ.cget("text"))
+
+        if girilen > max_resim_sayı:
+            resim_index_sol.delete("0.0","end")
+            resim_index_sol.insert("0.0",chars="    "+str(max_resim_sayı))
+        elif girilen > 1 and girilen <= max_resim_sayı:
+            resim_index_sol.delete("0.0","end")
+            resim_index_sol.insert("0.0",chars="    "+str(girilen))
+        elif girilen < 1 :
+            resim_index_sol.delete("0.0","end")
+            resim_index_sol.insert("0.0",chars="    1")
+              
     x_width = resim_label.winfo_width()
     y_height = resim_label.winfo_height()
     global image
-    image = ImageTk.PhotoImage(Image.open((resim_yolu)+"\\"+resim_listesi[int(resim_index_sol.cget("text"))-1]).resize((x_width,y_height)))
+    image = ImageTk.PhotoImage(Image.open((resim_yolu)+"\\"+resim_listesi[int(resim_index_sol.get("0.0","end"))-1]).resize((x_width,y_height)))
     resim_label.configure(image=image)
-    resim_adı_label.configure(text=resim_listesi[int(resim_index_sol.cget("text"))-1][:-4])
+    resim_adı_label.configure(text=resim_listesi[int(resim_index_sol.get("0.0","end"))-1][:-4])
 
     tag_varmı()
 
@@ -186,11 +205,11 @@ def etiketi_resme_ekle():
         if isinstance(wd,Button):
             wd.configure(background="white")
 
-    Image.open(str(resim_yolu + "\\" + resim_listesi[int(resim_index_sol.cget("text"))-1]))
+    Image.open(str(resim_yolu + "\\" + resim_listesi[int(resim_index_sol.get("0.0","end"))-1]))
     etikett = bytes(etiketlenen, 'utf-16le')
     zeroth_ifd = { 40094 : etikett }
     exif_bytes = piexif.dump( { "0th" : zeroth_ifd } )
-    piexif.insert(exif_bytes, str(resim_yolu + "\\" + resim_listesi[int(resim_index_sol.cget("text"))-1]))
+    piexif.insert(exif_bytes, str(resim_yolu + "\\" + resim_listesi[int(resim_index_sol.get("0.0","end"))-1]))
     piexif.ExifIFD
 
     tag_varmı()
@@ -246,7 +265,7 @@ def etiket_konu(frame:Frame):
 def etiket_konu_2(text:Text, labelframe:LabelFrame):
 
     global button_pressed
-    text_text = text.get("1.0", "end-1c")
+    text_text = text.get("1.0", "end")
     text.delete("1.0", "end")
     text_list = []
 
@@ -289,13 +308,15 @@ def etiket_etiket(master:Button, labelframe:LabelFrame):
 #▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩
 
 def tag_varmı():
-    image_tag = Image.open((resim_yolu)+"\\"+resim_listesi[int(resim_index_sol.cget("text"))-1])
+    image_tag = Image.open((resim_yolu)+"\\"+resim_listesi[int(resim_index_sol.get("0.0","end"))-1])
     
     if image_tag._getexif() == None:
         resim_label_varmı.configure(background="red")
     else:
         if 40094 in image_tag._getexif().keys():
             resim_label_varmı.configure(background="green")
+        else:
+            resim_label_varmı.configure(background="red")
 
 def herşeyi_sıfırla():
     for k in all_children(sağ_ekran_orta_ana_FRAME):
@@ -319,7 +340,8 @@ def ekran() :
     
     global button_pressed, resim_adı_FONT, sağ_sol_FONT
     
-    resim_adı_FONT = font.Font(size=15, weight="bold")
+    küçük_buton_FONT = font.Font(family="Segoe UI Black", weight="bold")
+    resim_adı_FONT = font.Font(family="Segoe UI Black", size=15, weight="bold")
     sağ_sol_FONT = font.Font(size=20, weight="bold")
     button_pressed = dict()
 
@@ -346,7 +368,7 @@ def ekran() :
     sol_ekran_orta.grid(row=1, column=0)
     sol_ekran_orta.propagate(0)
 
-    sol_ekran_alt = Frame( sol_ekran, width=sol_ekran_width, height=math.floor(height*1/10), name="sol_ekran_alt")
+    sol_ekran_alt = Frame( sol_ekran, width=sol_ekran_width, height=math.floor(height*15/100), name="sol_ekran_alt")
     sol_ekran_alt.grid(row=2, column=0)
     sol_ekran_alt.propagate(0)
 
@@ -401,7 +423,6 @@ def ekran() :
     scrollbar_x.pack(fill="x", expand=True)
 
     sağ_ekran_orta_ana_CANVAS.config(yscrollcommand=scrollbar_y.set, xscrollcommand=scrollbar_x.set)
-    # sağ_ekran_orta_ana_CANVAS.config(border=3, highlightbackground="blue")
 
     sağ_ekran_alt = Frame(sağ_ekran, width=sağ_ekran_width, height=math.floor(height*15/100), name="sağ_ekran_alt")
     sağ_ekran_alt.grid(row=2, column=0)
@@ -423,8 +444,8 @@ def ekran() :
 #▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩ SOL + ORTA ▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩
 
     global resim_label
-    resim_label = Label(sol_ekran_orta, width=width_convert(sol_ekran_orta,"Label"), height=35, name="resim_label")
-    resim_label.pack()
+    resim_label = Label(sol_ekran_orta, name="resim_label")
+    resim_label.pack(fill="both", expand=False)
     x_width = sol_ekran_orta.winfo_width()
     y_height = sol_ekran_orta.winfo_height()
     resim_label.configure(width=x_width, height=y_height)
@@ -436,34 +457,40 @@ def ekran() :
 
 #▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩ SOL + ALT ▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩
 
-    resim_sol_geç = Button(sol_ekran_alt, text="<<", width=10, height=4, font=sağ_sol_FONT, name="resim_sol_geç")
+    git_butonu = Button(sol_ekran_alt, text="GİT", width=15, height=3)
+    git_butonu.pack(side="bottom")
+
+    resim_sol_geç = Button(sol_ekran_alt, text="<<", width=10, height=2, font=sağ_sol_FONT, name="resim_sol_geç")
     resim_sol_geç.configure(command=lambda:resim_geç("sol"), background="#c8c8c8")
     resim_sol_geç.pack(side="left", expand=False)
     
     global resim_index_sol, resim_index_sağ
 
-    resim_index_sol = Label(sol_ekran_alt, text="1", width=5, height=4, name="resim_index_sol", font=sağ_sol_FONT)
+    resim_index_sol = Text(sol_ekran_alt, width=5, height=1, background="#c8c8c8", name="resim_index_sol", font=sağ_sol_FONT)
     resim_index_sol.pack(side="left", expand=False)
-    
-    resim_index_orta = Label(sol_ekran_alt, text="|\n|", width=1, height=4, font=sağ_sol_FONT, name="resim_index_orta")
-    resim_index_orta.pack(side="left", expand=False, anchor="c")
-    
-    resim_sağ_geç = Button(sol_ekran_alt, text=">>", width=10, height=4, font=sağ_sol_FONT, name="resim_sağ_geç")
-    resim_sağ_geç.configure(command=lambda:resim_geç("sağ"), background="#c8c8c8")
-    resim_sağ_geç.pack(side="right", expand=False)
+    resim_index_sol.insert("0.0","    1")
 
-    resim_index_sağ = Label(sol_ekran_alt, text=str(len(resim_listesi)), width=5, height=4, name="resim_index_sağ", font=sağ_sol_FONT)
-    resim_index_sağ.pack(side="right", expand=False)
+    resim_index_orta = Label(sol_ekran_alt, text="|\n|", width=1, height=2, font=sağ_sol_FONT, name="resim_index_orta")
+    resim_index_orta.pack(side="left", expand=False)
+
+    resim_index_sağ = Label(sol_ekran_alt, text=str(len(resim_listesi)), width=5, height=2, name="resim_index_sağ", font=sağ_sol_FONT)
+    resim_index_sağ.pack(side="left", expand=False)
+
+    resim_sağ_geç = Button(sol_ekran_alt, text=">>", width=10, height=2, font=sağ_sol_FONT, name="resim_sağ_geç")
+    resim_sağ_geç.configure(command=lambda:resim_geç("sağ"), background="#c8c8c8")
+    resim_sağ_geç.pack(side="left", expand=False)
+
+    git_butonu.configure(command=lambda : resim_geç(taraf="git"), background="#c8c8c8", font=küçük_buton_FONT)
 
     tag_varmı()
 
 #▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩ SAĞ + ÜST ▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩
 
     global etiket_konu_text
-    etiket_konu_text = Text(sağ_ekran_üst, width=15, height=1, font=font.Font(size=20,weight="bold"), name="etiket_konu_text")
+    etiket_konu_text = Text(sağ_ekran_üst, width=15, height=1, background="#c8c8c8", font=font.Font(size=20,weight="bold"), name="etiket_konu_text")
     etiket_konu_text.pack(fill="y", side="left", anchor="w")
 
-    etiket_konu_buton = Button(sağ_ekran_üst, width=12, text="ETİKET EKLE", command= lambda widget = sağ_ekran_orta_ana_FRAME : etiket_konu(widget) , name="etiket_konu_buton")
+    etiket_konu_buton = Button(sağ_ekran_üst, width=10, text="ETİKET EKLE", background="#c8c8c8", command= lambda widget = sağ_ekran_orta_ana_FRAME : etiket_konu(widget) , name="etiket_konu_buton", font=küçük_buton_FONT)
     etiket_konu_buton.pack(fill="y", side="left")
 
     etiket_listesi_boş_label = Label(sağ_ekran_üst, width=5, name="etiket_listesi_boş_label")
@@ -475,18 +502,18 @@ def ekran() :
     etiket_listesi_option = OptionMenu(sağ_ekran_üst, option_list_variable, *etiket_listesi)
     etiket_listesi_option.pack(fill="y", expand=False, side="right")
 
-    etiket_listesi_buton = Button(sağ_ekran_üst, width=12, text="İTHAL ET", command=etiket_yükle, name="etiket_listesi_buton")
-    etiket_listesi_buton.pack(fill="y", expand=False, side="left")
+    etiket_listesi_buton = Button(sağ_ekran_üst, width=10, text="İTHAL ET", background="#c8c8c8", command=etiket_yükle, name="etiket_listesi_buton", font=küçük_buton_FONT)
+    etiket_listesi_buton.pack(fill="y", expand=False, side="left", padx=2)
     
-    etiket_listesi_kaydet_buton = Button(sağ_ekran_üst, width=12, text="KAYDET", command=etiket_kaydet, state="active", name="etiket_listesi_kaydet_buton")
-    etiket_listesi_kaydet_buton.pack(fill="y", expand=False, side="left")
+    etiket_listesi_kaydet_buton = Button(sağ_ekran_üst, width=10, text="KAYDET", background="#c8c8c8", command=etiket_kaydet, name="etiket_listesi_kaydet_buton", font=küçük_buton_FONT)
+    etiket_listesi_kaydet_buton.pack(fill="y", expand=False, side="left", padx=2)
 
-    sıfırla = Button(sağ_ekran_üst, width=12, height=2, text="SIFIRLA", command=herşeyi_sıfırla, name="sıfırla")
-    sıfırla.pack(fill="y", side="left")
+    sıfırla = Button(sağ_ekran_üst, width=10, height=2, text="SIFIRLA", background="#c8c8c8", command=herşeyi_sıfırla, name="sıfırla", font=küçük_buton_FONT)
+    sıfırla.pack(fill="y", side="left", padx=2)
 
 #▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩ SAĞ + ALT ▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩
-    
-    etiket_ekle = Button(sağ_ekran_alt, text="ETİKET EKLE", font=resim_adı_FONT, command=etiketi_resme_ekle)
+
+    etiket_ekle = Button(sağ_ekran_alt, text="ETİKET EKLE", font=sağ_sol_FONT, command=etiketi_resme_ekle, background="#c8c8c8")
     etiket_ekle.pack(expand=True, fill="both")
 
     ana_ekran.mainloop()
