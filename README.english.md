@@ -1,4 +1,4 @@
-[![](https://img.shields.io/badge/Dil-Türkçe-red.svg)](https://github.com/tashteg0/JPG_Resim_Etiketleyici/blob/main/README.md)
+[![](https://img.shields.io/badge/Şu_Dile_Git_:-Türkçe-red.svg)](https://github.com/tashteg0/JPG_Resim_Etiketleyici/blob/main/README.md)
 
 # JPG_Resim_Etiketleyici
 
