@@ -50,7 +50,7 @@ Seç : the part where txt file selected.
 
 # Searching Tags
 
-## Seraching with Selecting from Tags Column
+## Searching with Selecting from Tags Column
 
 ![arama_1](https://github.com/tashteg0/JPG_Resim_Etiketleyici/assets/100838566/ba5924c6-a60e-40aa-b0b6-2ef48e179d60)
 
@@ -58,7 +58,7 @@ View ↦ Details selected.
 
 ![arama_2](https://github.com/tashteg0/JPG_Resim_Etiketleyici/assets/100838566/efee1811-5054-4e5c-9386-9f901f79ad27)
 
-Selecting Tags with rigth click column part.
+Select Tags with rigth click column part.
 
 ![arama_3](https://github.com/tashteg0/JPG_Resim_Etiketleyici/assets/100838566/babb1578-599f-4647-8048-d0cab93d950f)
 
