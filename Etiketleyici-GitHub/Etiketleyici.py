@@ -1,4 +1,4 @@
-# 11/01/2024
+# 30/03/2024
 
 import piexif
 import os
@@ -31,13 +31,13 @@ def resim_geç(taraf:str):
 
         if girilen < 1:
             resim_index_sol.delete("0.0","end")
-            resim_index_sol.insert("0.0",chars="    2")
+            resim_index_sol.insert("0.0",chars="2")
         elif girilen < max_resim_sayı :
             resim_index_sol.delete("0.0","end")
-            resim_index_sol.insert("0.0",chars="    "+str(girilen+1))
+            resim_index_sol.insert("0.0",chars=str(girilen+1))
         elif girilen > max_resim_sayı :
             resim_index_sol.delete("0.0","end")
-            resim_index_sol.insert("0.0",chars="    "+str(max_resim_sayı))
+            resim_index_sol.insert("0.0",chars=str(max_resim_sayı))
         
     elif taraf == "sol":            
         girilen = int(resim_index_sol.get("0.0","end").strip())
@@ -45,13 +45,13 @@ def resim_geç(taraf:str):
 
         if girilen > max_resim_sayı:
             resim_index_sol.delete("0.0","end")
-            resim_index_sol.insert("0.0",chars="    "+str(max_resim_sayı-1))
+            resim_index_sol.insert("0.0",chars=str(max_resim_sayı-1))
         elif girilen > 1 :
             resim_index_sol.delete("0.0","end")
-            resim_index_sol.insert("0.0",chars="    "+str(girilen-1))
+            resim_index_sol.insert("0.0",chars=str(girilen-1))
         elif girilen < 1 :
             resim_index_sol.delete("0.0","end")
-            resim_index_sol.insert("0.0",chars="    1")
+            resim_index_sol.insert("0.0",chars="1")
 
     elif taraf == "git":
         girilen = int(resim_index_sol.get("0.0","end").strip())
@@ -59,13 +59,13 @@ def resim_geç(taraf:str):
 
         if girilen > max_resim_sayı:
             resim_index_sol.delete("0.0","end")
-            resim_index_sol.insert("0.0",chars="    "+str(max_resim_sayı))
+            resim_index_sol.insert("0.0",chars=str(max_resim_sayı))
         elif girilen > 1 and girilen <= max_resim_sayı:
             resim_index_sol.delete("0.0","end")
-            resim_index_sol.insert("0.0",chars="    "+str(girilen))
+            resim_index_sol.insert("0.0",chars=str(girilen))
         elif girilen < 1 :
             resim_index_sol.delete("0.0","end")
-            resim_index_sol.insert("0.0",chars="    1")
+            resim_index_sol.insert("0.0",chars="1")
               
     x_width = resim_label.winfo_width()
     y_height = resim_label.winfo_height()
@@ -468,7 +468,7 @@ def ekran() :
 
     resim_index_sol = Text(sol_ekran_alt, width=5, height=1, background="#c8c8c8", name="resim_index_sol", font=sağ_sol_FONT)
     resim_index_sol.pack(side="left", expand=False)
-    resim_index_sol.insert("0.0","    1")
+    resim_index_sol.insert("0.0","1")
 
     resim_index_orta = Label(sol_ekran_alt, text="|\n|", width=1, height=2, font=sağ_sol_FONT, name="resim_index_orta")
     resim_index_orta.pack(side="left", expand=False)
