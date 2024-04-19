@@ -1,4 +1,4 @@
-# 30/03/2024
+# 11/01/2024
 
 import piexif
 import os
@@ -91,25 +91,23 @@ def etiket_kaydet():
     ŞU_ANKİ_TARİH = now.strftime( "%d-%m-%Y" )
     ŞU_ANKİ_SAAT = now.strftime( "%H-%M-%S" )
     dosya_yolu = os.path.dirname(os.path.realpath(__file__))
-    açılacak_text = dosya_yolu + "\\Etiketler\\TARIH~"+str(ŞU_ANKİ_TARİH)+" ⨝  SAAT~"+str(ŞU_ANKİ_SAAT)+".txt"
+    açılacak_text = dosya_yolu + "\\Etiketler\\TARIH~"+str(ŞU_ANKİ_TARİH)+" ⨝ SAAT~"+str(ŞU_ANKİ_SAAT)+".txt"
     
     kaydedilen_etiket = []
     for framelabels in all_children(sağ_ekran_orta_ana_FRAME):
         if isinstance(framelabels, LabelFrame) and framelabels.cget("text") != "":
-            etiket = ""
-            etiket += framelabels.cget("text") + ":"
+            etiket = "" ; etiket += framelabels.cget("text") + ":"
             for f2_labels in all_children(framelabels):
                 if isinstance(f2_labels, LabelFrame):
                     for buttons in all_children(f2_labels):
                         if isinstance(buttons, Button):
-                            etiket += str(buttons.cget("text")) + "-"
-                    kaydedilen_etiket.append(etiket[:-1])
+                            etiket += str(buttons.cget("text").rstrip()) + "-"
+                    etiket = etiket[:-1]
+                    kaydedilen_etiket.append(etiket)
     
-    dosya = open(açılacak_text, "w")
-
+    dosya = open(açılacak_text, "x")
     for kaydet in kaydedilen_etiket:
         dosya.write(kaydet+"\n")
-
     dosya.close()
 
     global option_list_variable, etiket_listesi_option
@@ -131,9 +129,9 @@ def etiket_yükle():
     txt_dosyası = open(str(dosya_yolu)+"\\Etiketler\\"+str(text_dosya_adı))
     for satır in txt_dosyası:
         satır = satır.rstrip('\n')
+        satır = satır.lstrip('\n')
         text_dosyası.append(str(satır))
     txt_dosyası.close()
-
     for satır in text_dosyası :
 
         buton_varmı = False
@@ -150,11 +148,11 @@ def etiket_yükle():
         etiket_frame = LabelFrame(sağ_ekran_orta_ana_FRAME, text=satır_konu, width=140, height=200, labelanchor="n")
         etiket_frame.pack(fill="y", expand=False, side="left")
 
-        eklenen_text = Text(etiket_frame, height=1, width=16)
+        eklenen_text = Text(etiket_frame, height=1, width=16, font=font.Font(size=14,weight="bold"))
         eklenen_text.pack(fill="x", expand=False, side="top")
         eklenen_text.propagate(0)
 
-        eklenen_buton = Button(etiket_frame, text=str(etiket_frame.cget("text"))+" EKLE", height=1, width=16)
+        eklenen_buton = Button(etiket_frame, text=str(etiket_frame.cget("text"))+" EKLE", height=2, width=16, font=font.Font(size=12,weight="bold"))
         eklenen_buton.pack(fill="x", expand=False, side="top")
         eklenen_buton.propagate(0)
 
@@ -171,7 +169,7 @@ def etiket_yükle():
                 if labelframe.winfo_id() not in button_pressed: 
                     button_pressed[labelframe.winfo_id()] = {}
 
-                yeni_buton = Button(labelframe, text=etiket_adı, height=1, width=16)
+                yeni_buton = Button(labelframe, text=etiket_adı, wraplength=140, height=2, width=14, font=font.Font(size=12,weight="bold"))
                 yeni_buton.pack(fill="x", expand=False)
                 yeni_buton.configure(command=lambda master=yeni_buton , labelframe=labelframe : etiket_etiket(master,labelframe))
                 button_pressed[labelframe.winfo_id()][yeni_buton.winfo_id()] = 0
@@ -192,18 +190,22 @@ def etiketi_resme_ekle():
                         if buttons.cget("background") == "#84e084":
                             etiket += str(buttons.cget("text")) + "-"
                 kaydedilen_etiket.append(etiket[:-1])
-
+    
     etiketlenen = ""
     for e in kaydedilen_etiket:
-        e = e.split(":")
-        e_e = e[1].split("-")
-        for et in e_e:
-            etiketlenen += str(e[0])+":"+str(et)+";"
-    etiketlenen = etiketlenen[:-1]
+        if ":" in e:
+            e = e.split(":")
+            e_e = e[1].split("-")
+            for et in e_e:
+                etiketlenen += str(e[0])+":"+str(et)+";"
 
     for wd in all_children(sağ_ekran_orta_ana_FRAME):
         if isinstance(wd,Button):
             wd.configure(background="white")
+    
+    for x in button_pressed:
+        for y in button_pressed[x]:
+            button_pressed[x][y] = 0
 
     Image.open(str(resim_yolu + "\\" + resim_listesi[int(resim_index_sol.get("0.0","end"))-1]))
     etikett = bytes(etiketlenen, 'utf-16le')
@@ -226,7 +228,6 @@ def etiketi_resme_ekle():
 #▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩
 
 def etiket_konu(frame:Frame):
-
     konu = str(etiket_konu_text.get("1.0", "end-1c"))
     konular = []
 
@@ -238,16 +239,15 @@ def etiket_konu(frame:Frame):
                 konular.append(k.cget("text"))
 
     if konu != "" and konu not in konular:
-
         etiket_frame = LabelFrame(frame, text=konu, width=140, height=200, labelanchor="n")
         etiket_frame.pack(fill="y", expand=False, side="left")
         etiket_frame.grid_propagate(0)
-
-        eklenen_text = Text(etiket_frame, height=1, width=16)
+        
+        eklenen_text = Text(etiket_frame, height=1, width=16, font=font.Font(size=14,weight="bold"))
         eklenen_text.pack(fill="x", expand=False, side="top")
         eklenen_text.propagate(0)
         
-        eklenen_buton = Button(etiket_frame, text=str(etiket_frame.cget("text"))+" EKLE", height=1, width=16)
+        eklenen_buton = Button(etiket_frame, text=str(etiket_frame.cget("text"))+" EKLE", height=2, width=16, font=font.Font(size=12,weight="bold"))
         eklenen_buton.pack(fill="x", expand=False, side="top")
         eklenen_buton.propagate(0)
         
@@ -285,8 +285,7 @@ def etiket_konu_2(text:Text, labelframe:LabelFrame):
         
         button_pressed[labelframe.winfo_id()] = {}
         for texts in text_list:
-            yeni_buton = Button(labelframe, text=texts, height=1, width=16)
-            yeni_buton.pack(fill="x", expand=False)
+            yeni_buton = Button(labelframe, text=texts, wraplength=140, height=2, width=14, font=font.Font(size=12,weight="bold")) ; yeni_buton.pack(fill="x", expand=False)
             yeni_buton.configure(command=lambda master=yeni_buton , labelframe=labelframe : etiket_etiket(master,labelframe))
             button_pressed[labelframe.winfo_id()][yeni_buton.winfo_id()] = 0
 
@@ -300,11 +299,11 @@ def etiket_etiket(master:Button, labelframe:LabelFrame):
         button_pressed[labelframe.winfo_id()][master.winfo_id()] = 1
         master.configure(background="#84e084")
 
-    elif button_pressed[labelframe.winfo_id()][master.winfo_id()] == 1:
+    # elif button_pressed[labelframe.winfo_id()][master.winfo_id()] == 1:
+    else:
         button_pressed[labelframe.winfo_id()][master.winfo_id()] = 0
         master.configure(background="white")
 
-#▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩
 #▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩
 
 def tag_varmı():
@@ -338,16 +337,15 @@ def ekran() :
     ana_ekran.title("Etiketleyici")
     ana_ekran.attributes("-fullscreen", True)
     
-    global button_pressed, resim_adı_FONT, sağ_sol_FONT
+    global button_pressed, resim_adı_FONT, sağ_sol_FONT, küçük_buton_FONT
     
     küçük_buton_FONT = font.Font(family="Segoe UI Black", weight="bold")
     resim_adı_FONT = font.Font(family="Segoe UI Black", size=15, weight="bold")
     sağ_sol_FONT = font.Font(size=20, weight="bold")
     button_pressed = dict()
 
-#▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩
+
 #▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩ SOL EKRAN ▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩
-#▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩
 
     width , height = get_wh(ana_ekran)
     sol_ekran_width = math.floor(width*35/100)-5
@@ -372,9 +370,8 @@ def ekran() :
     sol_ekran_alt.grid(row=2, column=0)
     sol_ekran_alt.propagate(0)
 
-#▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩
+
 #▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩ SAĞ EKRAN ▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩
-#▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩
 
     width , height = get_wh(ana_ekran)
     sağ_ekran_width = math.floor(width*65/100)-5
@@ -428,9 +425,7 @@ def ekran() :
     sağ_ekran_alt.grid(row=2, column=0)
     sağ_ekran_alt.propagate(0)
 
-#▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩
-#▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩ WİDGETLERİN YERLEŞTİRİLMESİ ▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩
-#▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩    
+#▩▩▩▩▩▩ WİDGETLERİN YERLEŞTİRİLMESİ ▩▩▩▩▩▩
 
 #▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩ SOL + ÜST ▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩
 
