@@ -1,4 +1,4 @@
-# 11/01/2024
+# 19/04/2024
 
 import piexif
 import os
@@ -299,7 +299,6 @@ def etiket_etiket(master:Button, labelframe:LabelFrame):
         button_pressed[labelframe.winfo_id()][master.winfo_id()] = 1
         master.configure(background="#84e084")
 
-    # elif button_pressed[labelframe.winfo_id()][master.winfo_id()] == 1:
     else:
         button_pressed[labelframe.winfo_id()][master.winfo_id()] = 0
         master.configure(background="white")
@@ -344,7 +343,6 @@ def ekran() :
     sağ_sol_FONT = font.Font(size=20, weight="bold")
     button_pressed = dict()
 
-
 #▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩ SOL EKRAN ▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩
 
     width , height = get_wh(ana_ekran)
@@ -369,7 +367,6 @@ def ekran() :
     sol_ekran_alt = Frame( sol_ekran, width=sol_ekran_width, height=math.floor(height*15/100), name="sol_ekran_alt")
     sol_ekran_alt.grid(row=2, column=0)
     sol_ekran_alt.propagate(0)
-
 
 #▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩ SAĞ EKRAN ▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩
 
